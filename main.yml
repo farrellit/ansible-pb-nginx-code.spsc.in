@@ -1,0 +1,19 @@
+- hosts: nginx_ci
+  gather_facts: false
+  vars:
+    nginx_sites:
+      - name: code.spsc.in
+        config: |
+          listen 8080;
+          location /jekins {
+          }
+          location /up {
+            root /var/www/code.spsc.in;
+            try_files $uri /up.json
+            default_type "application/json; charset=UTF-8"
+          }
+        files: 
+          - name: "up.json"
+            content: '{ "status": "happy" }'
+  roles:
+   - nginx

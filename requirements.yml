@@ -1,0 +1,4 @@
+- url: s3://sps-build-deploy/ansible/nginx-0.9.0.tbz2
+  paths: 
+    - from: ./
+      to: ./roles/nginx/
