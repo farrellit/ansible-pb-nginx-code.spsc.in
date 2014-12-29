@@ -1,19 +1,37 @@
 - hosts: nginx_ci
-  gather_facts: false
+  sudo: true
   vars:
     nginx_sites:
       - name: code.spsc.in
         config: |
           listen 8080;
-          location /jekins {
+          location /jenkins {
+            proxy_set_header X-Real-IP  $remote_addr;
+            proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto https;
+            if ($http_x_forwarded_proto != "https") {
+              rewrite ^(.*)$ https://$server_name$1 permanent;
+            }
+            proxy_pass http://internal-stage-jen-jenkinse-r3wthu4qp46q-1447994035.us-east-1.elb.amazonaws.com:8080/;
+          }
+          location /berkshelf {
+            proxy_set_header X-Real-IP  $remote_addr;
+            proxy_set_header X-Forwarded-For $remote_addr;
+            proxy_set_header Host $host;
+            proxy_set_header X-Forwarded-Proto https;
+            if ($http_x_forwarded_proto != "https") {
+              rewrite ^(.*)$ https://$server_name$1 permanent;
+            }
+            proxy_pass http://internal-prod-berk-Internal-EKC52D5NCT02-145378516.us-east-1.elb.amazonaws.com/;
           }
           location /up {
             root /var/www/code.spsc.in;
-            try_files $uri /up.json
-            default_type "application/json; charset=UTF-8"
+            try_files $uri /up.json;
+            default_type "application/json; charset=UTF-8";
           }
         files: 
           - name: "up.json"
             content: '{ "status": "happy" }'
   roles:
-   - nginx
+    - nginx

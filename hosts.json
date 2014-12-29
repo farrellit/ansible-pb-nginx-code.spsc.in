@@ -1,0 +1,9 @@
+[ 
+  {
+    "box": "ubuntu/trusty64", 
+    "name": "trusty",
+    "groups": "nginx_ci",
+    "ip": "192.168.37.3"
+  }
+]
+
